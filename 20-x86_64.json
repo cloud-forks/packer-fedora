@@ -42,7 +42,7 @@
         ],
         [
           "-m",
-          "size=920Mib"
+          "920m"
         ]
       ],
       "shutdown_command": "systemctl poweroff",
