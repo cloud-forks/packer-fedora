@@ -17,6 +17,4 @@ rm --force /var/lib/random-seed
 # Change any incorrect SELinux context labels
 fixfiles -R -a restore
 
-# Force the filesystem to reclaim space from deleted files
-dd if=/dev/zero of=/var/tmp/zeros bs=1M
-rm --force /var/tmp/zeros
+
