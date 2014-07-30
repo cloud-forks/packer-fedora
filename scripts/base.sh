@@ -14,4 +14,4 @@ echo "UseDNS no" >> /etc/ssh/sshd_config
 echo "==> Disabling GSSAPI authentication to prevent timeout delay"
 echo "GSSAPIAuthentication no" >> /etc/ssh/sshd_config
 
-yum -y install cloud-init
+yum -y install cloud-init qemu-guest-agent
