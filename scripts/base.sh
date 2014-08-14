@@ -1,17 +1,36 @@
-#!/usr/bin/env bash
+#!/bin/sh -ex
 
-# Remove MAC address and UUID from non-loopback interface configuration files
-sed --in-place '/^HWADDR/d' /etc/sysconfig/network-scripts/ifcfg-eth*
-sed --in-place '/^UUID/d' /etc/sysconfig/network-scripts/ifcfg-eth*
+cat <<EOF >  /etc/sysconfig/network-scripts/ifcfg-eth0
+DEVICE="eth0"
+BOOTPROTO=dhcp
+NM_CONTROLLED="no"
+PERSISTENT_DHCLIENT=1
+ONBOOT="yes"
+TYPE=Ethernet
+DEFROUTE=yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=yes
+NAME="eth0"
+EOF
 
 # Tell udev to disable the assignment of fixed network interface names
 # http://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/
 ln --symbolic /dev/null /etc/udev/rules.d/80-net-name-slot.rules
 echo "==> Configuring sshd_config options"
 
-echo "==> Turning off sshd DNS lookup to prevent timeout delay"
-echo "UseDNS no" >> /etc/ssh/sshd_config
-echo "==> Disabling GSSAPI authentication to prevent timeout delay"
-echo "GSSAPIAuthentication no" >> /etc/ssh/sshd_config
+sed -i 's|UseDNS no|UseDNS yes|g' /etc/ssh/sshd_config
+sed -i 's|GSSAPIAuthentication yes|GSSAPIAuthentication no|g'  /etc/ssh/sshd_config
+sed -i 's|PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
+sed -i 's|#PermitRootLogin yes|PermitRootLogin yes|g' /etc/ssh/sshd_config
 
+cat <<EOF > /etc/fstab
+/dev/sda1            /          ext4             defaults,discard,relatime     1    1
+EOF
 yum -y install cloud-init qemu-guest-agent
