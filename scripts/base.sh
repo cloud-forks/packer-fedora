@@ -33,4 +33,35 @@ sed -i 's|#PermitRootLogin yes|PermitRootLogin yes|g' /etc/ssh/sshd_config
 cat <<EOF > /etc/fstab
 /dev/sda1            /          ext4             defaults,discard,relatime     1    1
 EOF
-yum -y install cloud-init qemu-guest-agent
+yum -y install qemu-guest-agent
+
+cat <<EOF > /etc/cloud/cloud.cfg.d/50_suppress_ec2-user_use_root.cfg
+users: []
+disable_root: 0
+ssh_pwauth: 1
+EOF
+
+if ! grep -q growpart /etc/cloud/cloud.cfg; then
+  sed -i 's/ - resizefs/ - growpart\n - resizefs/' /etc/cloud/cloud.cfg
+fi
+
+if [ ! -e /etc/sysconfig/kernel ]; then
+cat <<EOF > /etc/sysconfig/kernel
+# UPDATEDEFAULT specifies if new-kernel-pkg should make
+# new kernels the default
+UPDATEDEFAULT=yes
+
+# DEFAULTKERNEL specifies the default kernel package type
+DEFAULTKERNEL=kernel
+EOF
+fi
+
+if [ ! -e /etc/sysconfig/network ];then
+cat > /etc/sysconfig/network <<EOF
+NETWORKING=yes
+NOZEROCONF=yes
+EOF
+fi
+
+
+
