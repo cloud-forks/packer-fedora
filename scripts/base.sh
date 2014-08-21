@@ -23,19 +23,20 @@ EOF
 # Tell udev to disable the assignment of fixed network interface names
 # http://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/
 ln --symbolic /dev/null /etc/udev/rules.d/80-net-name-slot.rules
-echo "==> Configuring sshd_config options"
-sed -i 's|^disable_root:.*|disable_root: 0|g' /etc/cloud/cloud.cfg
-sed -i 's|^ssh_pwauth:.*|ssh_pwauth: 1|g' /etc/cloud/cloud.cfg
-sed -i 's|UseDNS no|UseDNS yes|g' /etc/ssh/sshd_config
+sed -i 's|#UseDNS yes|UseDNS no|g' /etc/ssh/sshd_config
 sed -i 's|GSSAPIAuthentication yes|GSSAPIAuthentication no|g'  /etc/ssh/sshd_config
 sed -i 's|PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
 sed -i 's|#PermitRootLogin yes|PermitRootLogin yes|g' /etc/ssh/sshd_config
 
+sed -i 's|^SELINUX=.*|SELINUX=disabled|g' /etc/selinux/config
+
 cat <<EOF > /etc/fstab
 /dev/sda1            /          ext4             defaults,discard,relatime     1    1
 EOF
-yum -y install cloud-init qemu-guest-agent
 
+
+: <<COMMENT
+yum --assumeyes install cloud-init
 cat <<EOF > /etc/cloud/cloud.cfg.d/50_allow_root.cfg
 users: []
 disable_root: 0
@@ -45,6 +46,8 @@ EOF
 if ! grep -q growpart /etc/cloud/cloud.cfg; then
   sed -i 's/ - resizefs/ - growpart\n - resizefs/' /etc/cloud/cloud.cfg
 fi
+COMMENT
+
 
 if [ ! -e /etc/sysconfig/kernel ]; then
 cat <<EOF > /etc/sysconfig/kernel
@@ -63,6 +66,3 @@ NETWORKING=yes
 NOZEROCONF=yes
 EOF
 fi
-
-
-
