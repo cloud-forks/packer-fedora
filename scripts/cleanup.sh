@@ -1,5 +1,7 @@
 #!/bin/sh -ex
 
+yum --assumeyes install cloud-init
+
 # Remove unnecessary packages (and their dependencies)
 # which can’t be removed until after the installation process
 yum --assumeyes autoremove authconfig firewalld linux-firmware
