@@ -21,4 +21,4 @@ dracut -H --force
 # Change any incorrect SELinux context labels
 fixfiles -R -a restore
 
-
+fstrim -v /
