@@ -1,5 +1,5 @@
 {
   "post-processors": {
-    "compress": "packer-post-processor-compress",
+    "compress": "packer-post-processor-compress"
   }
 }
