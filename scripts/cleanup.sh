@@ -1,5 +1,6 @@
 #!/bin/sh -ex
 
+yum update
 yum --assumeyes install cloud-init
 
 # Remove unnecessary packages (and their dependencies)

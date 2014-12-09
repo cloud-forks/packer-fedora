@@ -1,0 +1,83 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<esc>",
+        "<wait>",
+        "linux ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "text ",
+        "inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/21.cfg",
+        "<enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_interface": "scsi",
+      "disk_size": 5000,
+      "disk_cache": "unsafe",
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "be73df48aed44aec7e995cf057d6b8cba7b58c78fb657eb8076376662ec5bd69",
+      "iso_checksum_type": "sha256",
+      "iso_url": "http://mirror.yandex.ru/fedora/linux/releases/21/Cloud/x86_64/iso/Fedora-Cloud-netinst-x86_64-21.iso",
+      "net_device": "virtio-net",
+      "output_directory": "output/fedora-21-x86_64-qemu/",
+      "machine_type": "pc-i440fx-1.7",
+      "qemuargs": [
+        [
+          "-device",
+          "virtio-scsi-pci,id=scsi0"
+        ],
+        [
+          "-drive",
+          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/fedora-21-x86_64-qemu/fedora-21-x86_64.raw"
+        ],
+        [
+          "-device",
+          "scsi-hd,bus=scsi0.0,drive=drive0"
+        ],
+        [
+          "-device",
+          "virtio-net,netdev=user.0"
+        ],
+        [
+          "-m",
+          "920"
+        ]
+      ],
+      "shutdown_command": "systemctl poweroff",
+      "ssh_password": "packer",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "10000s",
+      "type": "qemu",
+      "vm_name": "fedora-21-x86_64"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "scripts/base.sh",
+        "scripts/reboot.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "scripts": [
+        "scripts/cleanup.sh"
+      ],
+      "pause_before": "30s",
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "format": "pgzip",
+        "output": "output/fedora-21-x86_64-compress/"
+      }
+    ]
+  ]
+}
