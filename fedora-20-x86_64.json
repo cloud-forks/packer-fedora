@@ -74,10 +74,6 @@
   "post-processors": [
     [
       {
-        "type": "strip",
-        "output": "output/fedora-20-x86_64-strip/"
-      },
-      {
         "type": "compress",
         "format": "pgzip",
         "output": "output/fedora-20-x86_64-compress/"
