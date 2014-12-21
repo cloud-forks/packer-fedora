@@ -35,20 +35,6 @@ cat <<EOF > /etc/fstab
 EOF
 
 
-: <<COMMENT
-yum --assumeyes install cloud-init
-cat <<EOF > /etc/cloud/cloud.cfg.d/50_allow_root.cfg
-users: []
-disable_root: 0
-ssh_pwauth: 1
-EOF
-
-if ! grep -q growpart /etc/cloud/cloud.cfg; then
-  sed -i 's/ - resizefs/ - growpart\n - resizefs/' /etc/cloud/cloud.cfg
-fi
-COMMENT
-
-
 if [ ! -e /etc/sysconfig/kernel ]; then
 cat <<EOF > /etc/sysconfig/kernel
 # UPDATEDEFAULT specifies if new-kernel-pkg should make
