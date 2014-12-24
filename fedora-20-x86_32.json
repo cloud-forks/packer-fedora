@@ -1,0 +1,83 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<esc>",
+        "<wait>",
+        "linux ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "text ",
+        "inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/20.cfg",
+        "<enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_interface": "scsi",
+      "disk_size": 5000,
+      "disk_cache": "unsafe",
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "f9a2f536d9b87a5c403ecbe9113b9c4a32d2d31cb0a9c0944753807dfd3aef2a",
+      "iso_checksum_type": "sha256",
+      "iso_url": "http://mirror.yandex.ru/fedora/linux/releases/20/Fedora/i386/iso/Fedora-20-i386-netinst.iso",
+      "net_device": "virtio-net",
+      "output_directory": "output/fedora-20-x86_32-qemu/",
+      "machine_type": "pc-i440fx-1.7",
+      "qemuargs": [
+        [
+          "-device",
+          "virtio-scsi-pci,id=scsi0"
+        ],
+        [
+          "-drive",
+          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/fedora-20-x86_32-qemu/fedora-20-x86_32.raw"
+        ],
+        [
+          "-device",
+          "scsi-hd,bus=scsi0.0,drive=drive0"
+        ],
+        [
+          "-device",
+          "virtio-net,netdev=user.0"
+        ],
+        [
+          "-m",
+          "920"
+        ]
+      ],
+      "shutdown_command": "systemctl poweroff",
+      "ssh_password": "packer",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "10000s",
+      "type": "qemu",
+      "vm_name": "fedora-20-x86_32"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "scripts/base.sh",
+        "scripts/reboot.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "scripts": [
+        "scripts/cleanup.sh"
+      ],
+      "pause_before": "30s",
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "format": "pgzip",
+        "output": "output/fedora-20-x86_32-compress/"
+      }
+    ]
+  ]
+}
