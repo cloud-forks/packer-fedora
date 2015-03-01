@@ -76,7 +76,7 @@
     [
       {
         "type": "compress",
-        "format": "pgzip",
+        "format": "bgzf",
         "output": "output/fedora-21-x86_64-compress/"
       }
     ]
