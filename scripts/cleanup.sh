@@ -1,7 +1,7 @@
 #!/bin/sh -ex
 
 yum update
-yum --assumeyes install cloud-init
+yum --assumeyes install cloud-init cloud-utils
 
 # Remove unnecessary packages (and their dependencies)
 # which can’t be removed until after the installation process
