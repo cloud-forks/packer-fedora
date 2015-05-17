@@ -21,4 +21,6 @@ dracut -H --force
 # Change any incorrect SELinux context labels
 fixfiles -R -a restore
 
+rm -rf /tmp/* /root/anaconda-ks.cfg /root/install.log /root/install.log.syslog /etc/udev/rules.d/70-persistent-net.rules
+
 fstrim -v /
