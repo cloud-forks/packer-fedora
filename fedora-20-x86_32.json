@@ -62,6 +62,7 @@
       {
         "type": "compress",
         "format": "bgzf",
+        "metadata": true,
         "output": "output/fedora-20-x86_32-compress/"
       },
       {
