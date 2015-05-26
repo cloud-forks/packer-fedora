@@ -1,0 +1,74 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<esc>",
+        "<wait>",
+        "linux ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "text ",
+        "inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/22.cfg",
+        "<enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_interface": "virtio-scsi",
+      "disk_size": 5000,
+      "disk_cache": "unsafe",
+      "disk_discard": "unmap",
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "39df8a90c82ad62b1f1afe25bcb1fed7324179c9ba91d2278c72798721d3702f",
+      "iso_checksum_type": "sha256",
+      "iso_url": "http://mirror.yandex.ru/fedora/linux/releases/22/Server/i386/iso/Fedora-Server-netinst-i386-22.iso",
+      "net_device": "virtio-net",
+      "output_directory": "output/fedora-22-x86_32-qemu/",
+      "machine_type": "pc-i440fx-1.7",
+      "qemuargs": [
+        [
+          "-m",
+          "920"
+        ]
+      ],
+      "shutdown_command": "systemctl poweroff",
+      "ssh_password": "packer",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "1200s",
+      "type": "qemu",
+      "vm_name": "fedora-22-x86_32"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "scripts/base.sh",
+        "scripts/reboot.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "scripts": [
+        "scripts/cloudinit.sh",
+        "scripts/cleanup.sh"
+      ],
+      "pause_before": "30s",
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "format": "bgzf",
+        "metadata": true,
+        "output": "output/fedora-22-x86_32-compress/"
+      },
+      {
+        "type": "checksum",
+        "output": "output/fedora-22-x86_32-compress/"
+      }
+    ]
+  ]
+}
