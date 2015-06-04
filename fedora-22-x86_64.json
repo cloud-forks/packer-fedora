@@ -9,7 +9,7 @@
         "biosdevname=0 ",
         "net.ifnames=0 ",
         "text ",
-        "inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/21.cfg",
+        "inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/22.cfg",
         "<enter>"
       ],
       "boot_wait": "5s",
