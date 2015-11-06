@@ -1,0 +1,78 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<tab>",
+        "linux ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "text ",
+        "inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/23.cfg",
+        "<enter><enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_interface": "virtio-scsi",
+      "disk_size": 5000,
+      "disk_cache": "unsafe",
+      "disk_discard": "unmap",
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "http://mirror.yandex.ru/fedora/linux/releases/23/Server/i386/iso/Fedora-Server-23-i386-CHECKSUM",
+      "iso_checksum_type": "sha256",
+      "iso_url": "http://mirror.yandex.ru/fedora/linux/releases/23/Server/i386/iso/Fedora-Server-netinst-i386-23.iso",
+      "net_device": "virtio-net",
+      "output_directory": "output/fedora-23-x86_32-qemu/",
+      "machine_type": "pc-i440fx-1.7",
+      "qemuargs": [
+        [
+          "-m",
+          "920"
+        ]
+      ],
+      "shutdown_command": "systemctl poweroff",
+      "ssh_password": "packer",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "1200s",
+      "type": "qemu",
+      "vm_name": "fedora-23-x86_32"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "scripts/base.sh",
+        "scripts/reboot.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "scripts": [
+        "scripts/cloudinit.sh",
+        "scripts/cleanup.sh"
+      ],
+      "pause_before": "30s",
+      "type": "shell"
+    },
+    {
+      "type": "file",
+      "source": "files/80-hotplug-cpu-mem.rules",
+      "destination": "/etc/udev/rules.d/80-hotplug-cpu-mem.rules"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "format": "bgzf",
+        "metadata": true,
+        "output": "output/fedora-23-x86_32-compress/"
+      },
+      {
+        "type": "checksum",
+        "output": "output/fedora-23-x86_32-compress/"
+      }
+    ]
+  ]
+}
