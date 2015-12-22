@@ -31,7 +31,7 @@ sed -i 's|#PermitRootLogin yes|PermitRootLogin yes|g' /etc/ssh/sshd_config
 sed -i 's|^SELINUX=.*|SELINUX=disabled|g' /etc/selinux/config
 
 cat <<EOF > /etc/fstab
-/dev/sda1            /          ext4             defaults,discard,relatime     1    1
+/dev/sda1            /          ext4             defaults,relatime     1    1
 EOF
 
 
